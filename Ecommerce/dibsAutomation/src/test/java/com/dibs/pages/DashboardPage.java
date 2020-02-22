@@ -32,6 +32,21 @@ public class DashboardPage extends FlowMethods{
 		}
 	}
 	
+	public void navigateToHomeScreen()
+	{
+		String locator;
+		try
+		{
+			locator = objectRepo.getProperty("Dashboard.logo");
+			actionMethods.click(locator);
+			
+			Report.getInstance().generateReport(Thread.currentThread().getStackTrace()[1].getMethodName(), Constant.statusFlag+"Navigate to Home screen ", driver);
+		} catch (Exception e) {
+			 Constant.statusFlag = "Failed";			
+			 Report.getInstance().generateReport(Thread.currentThread().getStackTrace()[1].getMethodName(), Constant.statusFlag+"Failed to search", driver);
+		}
+	}
+	
 	public void validateProducts(String productName)
 	{
 		String locator, expResult = "";

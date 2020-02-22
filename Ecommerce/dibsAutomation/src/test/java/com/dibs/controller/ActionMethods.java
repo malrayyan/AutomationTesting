@@ -570,19 +570,22 @@ public class ActionMethods {
 	 * actions.moveToElement(target).perform(); }
 	 */
 	
-	public void mouseHoveActions(String source, String destination)
+	public void mouseHoveActions(String source, String destination) throws Exception
 	{
 		try
 		{
 			WebElement mainMenu = driver.findElement(findByLocator(source.split("~")[1], source.split("~")[0]));
 			Actions actions = new Actions(driver);
-			actions.moveToElement(mainMenu);
+			actions.moveToElement(mainMenu).build().perform();
+			Thread.sleep(2000);
 			WebElement subMenu = driver.findElement(findByLocator(destination.split("~")[1], destination.split("~")[0]));
 			actions.moveToElement(subMenu);
 			actions.click().build().perform();
-			
+			Constant.statusFlag = "Passed";
 		} catch (Exception e) {
+			Constant.statusFlag = "Failed";
 			log.error("Failed to execute step : "+e);
+			throw e;
 		}
 	}
 	

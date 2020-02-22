@@ -33,6 +33,7 @@ import com.dibs.controller.FlowMethods;
 import com.dibs.controller.Runner;
 import com.dibs.testData.DashboardTestData;
 import com.dibs.testData.TestDataObjectLogin;
+import com.dibs.testData.ToysAndETestData;
 import com.dibs.utils.Constant;
 import com.dibs.utils.ModuleTestData;
 
@@ -111,18 +112,15 @@ public class ExcelOperation {
 				Constant.environment = (executionvariablesRecordset.getField("Environment"));
 				Constant.URL = (executionvariablesRecordset.getField("ApplicationURL"));
 				country = (executionvariablesRecordset.getField("Country"));
-				modules = (executionvariablesRecordset.getField("Modules"));
 				Constant.screenshot_path = (executionvariablesRecordset.getField("PathOfScreenshot"));
 				//Constant.screenshot_path = System.getProperty("user.dir")+"//src//test//resources//reportsScreenshots//";
 				//Constant.driverPath_chrome = (executionvariablesRecordset.getField("DriverPath_chrome"));
 				Constant.driverPath_chrome = System.getProperty("user.dir")+"//src//test//resources//drivers//chromedriver.exe";
-				Constant.download_dir = (executionvariablesRecordset.getField("Download_dir"));
 				globalMaxTimeout = (executionvariablesRecordset.getField("GLOBAL_MAX_TIMEOUT"));
 				sleepTimeout = (executionvariablesRecordset.getField("SLEEP"));
 				loadingTimeout = (executionvariablesRecordset.getField("LOADING_TIMEOUT"));
 			    //Constant.pathOfReport = (executionvariablesRecordset.getField("PathOfReport"));
 				Constant.pathOfReport = System.getProperty("user.dir")+"//src//test//resources//reports//";
-				Constant.extentReportConfigFile = (executionvariablesRecordset.getField("ExtentReportConfigFile"));
 				Constant.GLOBAL_MAX_TIMEOUT=Integer.parseInt(globalMaxTimeout);
 				Constant.SLEEP=Integer.parseInt(sleepTimeout);
 				Constant.LOADING_TIMEOUT=Integer.parseInt(loadingTimeout);
@@ -233,8 +231,12 @@ public class ExcelOperation {
 					populateDashTestboardData(testSuiteModuleName, testSuiteJourneyID);
 					testcaseDescription = DashboardTestData.TEST_DESCRIPTION;
 					TestDataObjectLogin.LOGIN_DETAILS = DashboardTestData.LOGIN_DETAILS;
+				} else if(testSuiteModuleName.equalsIgnoreCase("TandE"))
+				{
+					populateToysAndEData(testSuiteModuleName, testSuiteJourneyID);
+					testcaseDescription = ToysAndETestData.TEST_DESCRIPTION;
+					TestDataObjectLogin.LOGIN_DETAILS = ToysAndETestData.LOGIN_DETAILS;
 				}
-				
 				Constant.extentTest = Constant.extentReporter.startTest(testSuiteJourneyID, testcaseDescription);  
 				Constant.extentTest.assignAuthor(System.getProperty("user.name"));				
 				if(testSuiteSubModuleName.equalsIgnoreCase(testSuiteModuleName))
@@ -330,6 +332,38 @@ public class ExcelOperation {
 		}
 	}
 	
+	public void populateToysAndEData(String ModuleName, String JourneyID) {
+
+		Connection moduleTestDataConnection = null;
+		Recordset moduleTestDataRecordset = null;
+		try {
+			moduleTestDataConnection = fillo.getConnection(Constant.Path_TestData);
+			String strQuery = "Select * from "+ ModuleName +" where Journey_ID='"+JourneyID+"'";
+			moduleTestDataRecordset = moduleTestDataConnection.executeQuery(strQuery);
+			while (moduleTestDataRecordset.next()) {
+				ToysAndETestData.JOURNEY_ID = (moduleTestDataRecordset.getField("Journey_ID"));
+				ToysAndETestData.LOGIN_DETAILS = (moduleTestDataRecordset.getField("LoginDetails"));
+				ToysAndETestData.TEST_DESCRIPTION = (moduleTestDataRecordset.getField("TEST_CASE_DESCRIPTION"));
+				ToysAndETestData.PRODUCT_NAME = (moduleTestDataRecordset.getField("ProductName"));
+				ToysAndETestData.ACTION = (moduleTestDataRecordset.getField("Action"));
+				ToysAndETestData.SPECIAL_OFFERS = (moduleTestDataRecordset.getField("SplOffers"));
+				ToysAndETestData.PRICE = (moduleTestDataRecordset.getField("PriceRange"));
+				ToysAndETestData.ITEM_NAME = (moduleTestDataRecordset.getField("ItemName"));
+				
+			}
+		}catch (Exception e) {
+			log.error("Failed to execute step", e);
+		} finally {
+			if(moduleTestDataConnection!=null) {
+				moduleTestDataConnection.close();
+			} else {
+				log.error("Unable to create connection with Test Data sheet.");
+			}
+			if(moduleTestDataRecordset!=null){
+				moduleTestDataRecordset.close();
+			}
+		}
+	}
 	
 	public void executeFlowMethods(String testSuiteModuleName, String testSuiteJourneyFlowID) {
 		try {

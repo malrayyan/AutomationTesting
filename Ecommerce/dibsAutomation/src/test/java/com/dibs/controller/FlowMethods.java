@@ -8,7 +8,9 @@ import org.openqa.selenium.WebDriver;
 
 import com.dibs.pages.DashboardPage;
 import com.dibs.pages.LoginPage;
+import com.dibs.pages.ToysAndEntertainment;
 import com.dibs.testData.DashboardTestData;
+import com.dibs.testData.ToysAndETestData;
 import com.dibs.utils.Constant;
 
 public class FlowMethods {
@@ -35,6 +37,7 @@ public class FlowMethods {
 	
 	public static void login(String moduleName) throws Exception
 	{
+		DashboardPage dashboard = new DashboardPage();
 		try
 		{
 			if(driver==null)
@@ -45,6 +48,7 @@ public class FlowMethods {
 			} else
 			{
 				actionMethod.waitFor();
+				dashboard.navigateToHomeScreen();
 
 			}
 		} catch (Exception e) {
@@ -67,5 +71,22 @@ public class FlowMethods {
 			Report.getInstance().generateReport(Thread.currentThread().getStackTrace()[1].getMethodName(), Constant.statusFlag, driver);
 		}
 	}	
+	
+	public void selectProductFromToysAndEntertainment(String moduleName)
+	{
+		ToysAndEntertainment toys = new ToysAndEntertainment();
+		try
+		{
+			toys.navigateToysAndEntireTainment(ToysAndETestData.PRODUCT_NAME);
+			toys.selectSpecialOffers(ToysAndETestData.SPECIAL_OFFERS);
+			toys.selectpriceRange(ToysAndETestData.PRICE);
+			toys.selectProductLink(ToysAndETestData.ITEM_NAME);
+			
+			Report.getInstance().generateReport(Thread.currentThread().getStackTrace()[1].getMethodName(), Constant.statusFlag, driver);
+		} catch (Exception e) {
+			
+			Report.getInstance().generateReport(Thread.currentThread().getStackTrace()[1].getMethodName(), Constant.statusFlag, driver);
+		}
+	}
 	
 }
